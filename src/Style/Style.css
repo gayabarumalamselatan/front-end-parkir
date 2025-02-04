@@ -1,0 +1,121 @@
+@import url("https://fonts.cdnfonts.com/css/sf-pro-display");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Send+Flowers&display=swap");
+
+.background-image {
+  position: relative;
+  overflow: hidden;
+  background-image: url("/dist/assets/img/mainBackground.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.background-image::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(123, 123, 123, 0.5);
+  z-index: 1;
+  backdrop-filter: blur(20px);
+}
+
+/* navbar */
+.app-header.navbar.navbar-expand.bg-body {
+  position: relative;
+  overflow: hidden;
+  background-image: url("/dist/assets/img/mainBackground.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.app-header.navbar.navbar-expand.bg-body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(123, 123, 123, 0.5);
+}
+
+.background-image > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Login input */
+.form-control.rounded-pill {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  padding-left: 20px;
+  color: white;
+  font-family: "SF Pro Display", sans-serif;
+}
+.form-control.rounded-pill::placeholder {
+  color: white;
+}
+.input-group-text.rounded-end-pill {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: none;
+  color: white !important;
+}
+button#loginButton.rounded-pill {
+  background-color: #004ba0;
+  color: #fff;
+  font-family: "SF Pro Display", sans-serif;
+  border: none;
+}
+button#loginButton.rounded-pill:hover {
+  background-color: #003470;
+}
+
+/* Sidebar */
+li.nav-item > a.nav-link {
+  border-radius: 15px;
+}
+li.nav-item > a.nav-link:hover {
+  background: rgba(0, 75, 160, 0.1);
+  border-radius: 15px;
+}
+.sidebar-logo {
+  font-family: "Send Flowers", serif;
+  color: #004ba0;
+}
+.sidebar-text {
+  font-weight: 600;
+  color: #004ba0;
+}
+
+/* Jumbotron */
+.jumbotron-bg {
+  background-image: url("/dist//assets//img/Jumbotronbg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
+}
+.jumbotron-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(123, 123, 123, 0.5);
+  backdrop-filter: blur(20px);
+  z-index: 1;
+}
+#jumbo.container-fluid {
+  position: relative;
+  z-index: 999;
+}
+h1#jumbo {
+  font-family: "Send Flowers", serif;
+  font-weight: 100 !important;
+  color: #fff;
+}
