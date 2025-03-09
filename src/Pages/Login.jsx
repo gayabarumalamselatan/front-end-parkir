@@ -1,13 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AUTH_SERVICE_LOGIN } from "../Config/ConfigUrl";
 
 const LoginPage = () => {
-  const [userName, setUserName] = useState("");
-  const [userPass, setUserPass] = useState("");
+  const [name, setUserName] = useState("");
+  const [password, setUserPass] = useState("");
   const navigate = useNavigate();
-  // const [errMsg ,setErrMsg] = useState()
-  const login_url = "https://5z0e4.wiremockapi.cloud/auth-service/login";
+  
 
   useEffect(() => {
     const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
@@ -16,50 +16,31 @@ const LoginPage = () => {
     }
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleLogin = async () => {
     try {
-      // const requestData = {userName, password};
       const response = await axios.post(
-        login_url,
-        JSON.stringify({ userName, userPass }),
-        // JSON.stringify({email, password}),
-        // requestData,
+        `${AUTH_SERVICE_LOGIN}`,
         {
-          Headers: { "Content-Type": "application/json" },
-          // withCredentials: true
-        }
+          name, password
+        },
       );
+      console.log("response",response)
       if (response.status === 200) {
         sessionStorage.setItem("isLoggedIn", "true");
+        console.log(response.data.userId)
+        sessionStorage.setItem('userId', response.data.userId)
+        sessionStorage.setItem('userName', response.data.userName)
       }
       console.log(JSON.stringify(response?.data));
-
-      // const accessToken = response?.data?.accessToken;
-      // const roles = response?.data?.roles;
-      // // setAuth({userName, userPass, roles, accessToken});
-      // setAuth({
-      //   email,
-      //   password
-      // })
-      // setUserName('');
-      // setUserPass('');
-      // setSuccess(true);
-      // sessionStorage.setItem('token', response.data.token);
       navigate("/");
     } catch (err) {
-      // if(!err.response){
-      //   setErrMsg('No Server Response');
-      // }else if(err.response?.status===400){
-      //   setErrMsg('Missing Username or Password');
-      // }else if (err.response?.status === 401){
-      //   setErrMsg('Unauthorized');
-      // }else{
-      //   setErrMsg('Login Failed');
-      //   setLoginError(true)
-      // }
-      console.err(err);
+      console.error(err);
     }
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    handleLogin()
   };
 
   return (
@@ -71,7 +52,7 @@ const LoginPage = () => {
         <div className="login-box">
           <div className="card-primary">
             <div className="card-body login-card-body bg-transparent">
-              <h1 className="login-box-msg text-white mb-4 fw-light">
+              <h1 className="login-box-msg text-white mb-4 text-4xl font-thin">
                 Welcome Back!
               </h1>
               <form>
@@ -82,7 +63,7 @@ const LoginPage = () => {
                     className="form-control rounded-pill py-2"
                     placeholder="Username"
                     onChange={(e) => setUserName(e.target.value)}
-                    value={userName}
+                    value={name}
                   />
                   {/* <div className="input-group-text rounded-end-pill">
                   <FontAwesomeIcon className="me-1" icon={faUser}/>
@@ -95,7 +76,7 @@ const LoginPage = () => {
                     className="form-control rounded-pill py-2"
                     placeholder="Password"
                     onChange={(e) => setUserPass(e.target.value)}
-                    value={userPass}
+                    value={password}
                   />
                   {/* <div className="input-group-text rounded-end-pill">
                   <FontAwesomeIcon className="me-1" icon={faEye}/>

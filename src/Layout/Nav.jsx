@@ -1,29 +1,41 @@
 import { faBars, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
 import PropTypes from "prop-types";
-
 import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { AUTH_SERVICE_LOGOUT } from "../Config/ConfigUrl";
 
 const Nav = ({ toggleSidebar }) => {
   const navigate = useNavigate();
+  const userId = parseInt(sessionStorage.getItem('userId'))
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post(`${AUTH_SERVICE_LOGOUT}`, {
+        userId
+      })
+      console.log(response)
+      
+    } catch (error) {
+      console.error(error)
+    }
     sessionStorage.clear();
-    navigate("/login");
+        navigate("/login");
   };
 
   const showLogoutConfirm = () => {
     Swal.fire({
-      title: "Confirmation",
-      text: "Are you sure you want to logout?",
+      title: "Konfirmasi",
+      text: "Anda yakin mau log out?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "warning",
       cancelButtonColor: "grey",
+      confirmButtonColor: "red",
       confirmButtonText: "Logout",
-      cancelButtonText: "Cancel",
+      cancelButtonText: "Batal",
+      reverseButtons:true
     }).then((result) => {
       if (result.isConfirmed) {
         handleLogout();
