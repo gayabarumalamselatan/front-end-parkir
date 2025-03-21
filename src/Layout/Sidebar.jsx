@@ -77,7 +77,7 @@ const Sidebar = ({ show, menuData }) => {
       const isModuleOpen = openModules[module.id]; // Check if the module is open
   
       return (
-        <li className={`nav-item mx-4 ${isModuleOpen? 'sidebar-active' : ''}`} key={module.id}>
+        <li className={`nav-item mx-4 mb-2 ${isModuleOpen? 'sidebar-active' : ''}`} key={module.id}>
           <a 
             href={module.module_url || '#'} 
             className= {`nav-link nav-link align-items-center ${isModuleOpen ? 'bg-sidebarBg' : ''}`}
@@ -112,8 +112,8 @@ const Sidebar = ({ show, menuData }) => {
         style={{ overflowY: "hidden" }}
       >
         <div>
-          <div className="user-panel py-3 d-flex justify-content-center align-items-center border-bottom">
-            <p className="sidebar-logo my-0">Parkirin Dong!</p>
+          <div className="user-panel shadow-sm py-3 d-flex justify-content-center align-items-center ">
+            <p className="sidebar-logo my-0 text-2xl font-normal">Parkirin Dong!</p>
           </div>
 
           {/* Menu */}

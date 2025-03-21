@@ -1,97 +1,15 @@
-import {  faAdd, faCaretLeft, faCaretRight, faEdit } from "@fortawesome/free-solid-svg-icons";
-import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
+import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PropTypes from "prop-types"
+import PropTypes from "prop-types";
 
-const DynamicTable = ({
-  tableName, 
-  dataTable, 
-  setIsRoleModalOpen,
-  setDataToEdit,
-  setDataToDelete,
-  setIsModuleModalOpen,
-  setIsMenuModalOpen,
-  setIsUserModalOpen
-}) => {
+const MemberTable = ({dataTable}) => {
 
   if (!Array.isArray(dataTable) || dataTable.length === 0) {
     return <p className="text-center text-gray-500">No data available</p>;
   }
 
-  console.log(dataTable)
   const headers = dataTable.length > 0 ? Object.keys(dataTable[0]) : [];
-  console.log(headers)
 
-  const AddButtonNaming = (tableName) => {
-    if(tableName === 'Daftar Pengguna') {
-      return "Tambah Pengguna"
-    } else if(tableName === 'Daftar Modul'){
-      return "Tambah Modul"
-    } else if(tableName === "Daftar Menu") {
-      return "Tambah Menu"
-    } else if(tableName === "Daftar Role") {
-      return "Tambah Role"
-    } else if(tableName === "Daftar Permission"){
-      return "Tambah Permission"
-    }else {
-      return "Tambah"
-    }
-  }
-
-  const modalHandler = (tableName, id, isDelete) => {
-    console.log(tableName)
-    if(tableName === 'Daftar Role') {
-      setIsRoleModalOpen(true)
-      if(id){
-        setDataToEdit(id)
-      } else {
-        setDataToEdit()
-      } 
-      if (isDelete) {
-        setDataToDelete(id)
-      }else{
-        setDataToDelete()
-      }
-    } else if (tableName === 'Daftar Modul') {
-      setIsModuleModalOpen(true)
-      if(id){
-        setDataToEdit(id)
-      } else {
-        setDataToEdit()
-      }
-
-      if(isDelete) {
-        setDataToDelete(id)
-      }else{
-        setDataToDelete()
-      }
-    } else if (tableName === 'Daftar Menu') {
-      setIsMenuModalOpen(true)
-      if(id) {
-        setDataToEdit(id)
-      } else {
-        setDataToEdit()
-      }
-      if(isDelete) {
-        setDataToDelete(id)
-      }else{
-        setDataToDelete()
-      }
-    } else if(tableName === 'Daftar Pengguna') {
-      setIsUserModalOpen(true)
-      if(id){
-        setDataToEdit(id)
-      }else{
-        setDataToEdit()
-      }
-      if(isDelete){
-        setDataToDelete(id)
-      } else {
-        setDataToDelete()
-      }
-    }
-  }
- 
   return (
     <>
       <div className="card card-default mx-4 mb-4 rounded-mainCard">
@@ -116,23 +34,23 @@ const DynamicTable = ({
               </select>
             </div>
             <div>
-              <button 
+              {/* <button 
                 className="rounded-xl bg-mainColor px-3 py-1 text-cyan-50 flex items-center justify-center"
                 onClick={() => modalHandler(tableName)}
               > 
                 <FontAwesomeIcon icon={faAdd} className="mr-2"/> {AddButtonNaming(tableName)}
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
       </div>
       <div className="bg-white shadow-md rounded-mainCard overflow-hidden mx-4">
-        <div className="bg-mainColor text-white px-4 py-2 font-semibold">{tableName}</div>
+        <div className="bg-mainColor text-white px-4 py-2 font-semibold">Daftar Member</div>
           <div className="overflow-x-auto m-7">
             <table className="w-full text-sm text-left border border-gray-200 min-w-max">
               <thead className="bg-gray-100 text-gray-700">
                 <tr>
-                  <th className="px-3 py-2 border">Aksi</th>
+                  
                   {headers.map((header) => (
                     <th key={header} className="px-3 py-2 border">
                       {header.replace(/_/g, ' ').toUpperCase()}
@@ -143,7 +61,7 @@ const DynamicTable = ({
               <tbody>
               {dataTable.map((row, index) => (
                 <tr key={index} className="border">
-                  <td className="px-3 py-2 text-start">
+                  {/* <td className="px-3 py-2 text-start">
                     <button 
                       className="bg-mainColor w-10 h-10 rounded text-white hover:bg-blue-900"
                       onClick={() => modalHandler(tableName, row)}
@@ -156,7 +74,7 @@ const DynamicTable = ({
                     >
                       <FontAwesomeIcon icon={faTrash}/>
                     </button>
-                  </td>
+                  </td> */}
                   {headers.map((header) => (
                     <td key={header} className="px-3 py-2 border">
                       {row[header] ?? "-"}
@@ -181,18 +99,8 @@ const DynamicTable = ({
   )
 }
 
-DynamicTable.propTypes = {
-  tableName: PropTypes.any.isRequired,
-  dataTable: PropTypes.arrayOf(PropTypes.object),
-  setIsRoleModalOpen: PropTypes.any,
-  setDataToEdit: PropTypes.func,
-  setDataToDelete: PropTypes.func,
-
-  setIsModuleModalOpen: PropTypes.any,
-  setIsMenuModalOpen: PropTypes.any,
-  setIsUserModalOpen: PropTypes.any
+MemberTable.propTypes = {
+  dataTable: PropTypes.arrayOf(PropTypes.object)
 }
 
-
-
-export default DynamicTable
+export default MemberTable

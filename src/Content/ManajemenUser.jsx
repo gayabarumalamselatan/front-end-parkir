@@ -12,8 +12,13 @@ const DaftarPengguna = () => {
   const namaTable = "Daftar Pengguna"
 
   const fetchUsers = async () => {
+    const token = sessionStorage.getItem("accessToken")
     try {
-      const response = await axios.get(`${AUTH_SERVICE_USER}`);
+      const response = await axios.get(`${AUTH_SERVICE_USER}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       setUserData(response.data)
     } catch (error) {
       console.error(error)

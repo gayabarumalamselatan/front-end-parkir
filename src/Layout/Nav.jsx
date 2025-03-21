@@ -22,7 +22,9 @@ const Nav = ({ toggleSidebar }) => {
       console.error(error)
     }
     sessionStorage.clear();
-        navigate("/login");
+    localStorage.clear();
+    navigate("/login");
+    window.location.reload()
   };
 
   const showLogoutConfirm = () => {
@@ -45,7 +47,7 @@ const Nav = ({ toggleSidebar }) => {
 
   return (
     <Fragment>
-      <nav className="app-header navbar navbar-expand bg-body shadow border-0">
+      <nav className="app-header navbar navbar-expand bg-body h-16 shadow border-0">
         <div className="container-fluid">
           <ul className="navbar-nav">
             <li className="nav-item">

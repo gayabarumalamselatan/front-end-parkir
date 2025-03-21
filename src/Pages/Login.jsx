@@ -30,9 +30,12 @@ const LoginPage = () => {
         console.log(response.data.userId)
         sessionStorage.setItem('userId', response.data.userId)
         sessionStorage.setItem('userName', response.data.userName)
+        sessionStorage.setItem('accessToken', response.data.accessToken)
+        sessionStorage.setItem('refreshToken', response.data.refreshToken)
       }
       console.log(JSON.stringify(response?.data));
       navigate("/");
+      window.location.reload()
     } catch (err) {
       console.error(err);
     }
