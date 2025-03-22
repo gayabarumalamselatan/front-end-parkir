@@ -2,48 +2,37 @@ import axios from "axios";
 import { useEffect } from "react";
 import { REFRESH_TOKEN } from "../Config/ConfigUrl";
 
-
 const TokenRefresh = () => {
-  const refreshtoken = sessionStorage.getItem("refreshToken")
-  const isLoggedIn = sessionStorage.getItem("isLoggedIn")
+  const refreshtoken = sessionStorage.getItem("refreshToken");
+  const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+
   useEffect(() => {
-    if(isLoggedIn){
+    if (isLoggedIn && refreshtoken) {
       const refreshToken = async () => {
         try {
           const refresh = await axios.post(`${REFRESH_TOKEN}`, {
-            refreshToken: refreshtoken
-          })
+            refreshToken: refreshtoken,
+          });
           const { accessToken } = refresh.data;
-          sessionStorage.setItem("accessToken", accessToken)
+          sessionStorage.setItem("accessToken", accessToken);
+          sessionStorage.setItem("tokenRefreshTime", Date.now().toString());
+          console.log("Token refreshed successfully!");
         } catch (error) {
           console.error("Failed to refresh token:", error);
         }
-      }; 
+      };
 
-      const storedTime = sessionStorage.getItem("tokenRefreshTime");
-      const refreshInterval = 300000;
+      const lastRefreshTime = sessionStorage.getItem("tokenRefreshTime");
+      const refreshInterval = 300000 - 1000; // 5 minutes
 
-      if(storedTime){
-        const elapsedTime = Date.now() - parseInt(storedTime, 10);
-        const remainingTime = refreshInterval - elapsedTime;
-
-        if(remainingTime > 0){
-          const timeoutId = setTimeout(() => {
-            refreshToken();
-            sessionStorage.setItem("tokenRefreshTime", Date.now().toString());
-          }, remainingTime);
-          return () => clearTimeout(timeoutId);
-        }
+      if (!lastRefreshTime || Date.now() - parseInt(lastRefreshTime, 10) > refreshInterval) {
+        refreshToken(); 
       }
 
-      const timeoutId = setTimeout(() => {
-        refreshToken();
-        sessionStorage.setItem("tokenRefreshTime", Date.now().toString());
-      }, refreshInterval)
+      const intervalId = setInterval(refreshToken, refreshInterval);
 
-      // const intervalId = setInterval(refreshToken, 300000);
-      return () => clearInterval(timeoutId);
-    } 
+      return () => clearInterval(intervalId);
+    }
   }, [isLoggedIn, refreshtoken]);
 
   return null;

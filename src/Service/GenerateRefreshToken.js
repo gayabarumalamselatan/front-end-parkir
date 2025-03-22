@@ -5,8 +5,9 @@ import { GENERATE_REFRESH_TOKEN } from "../Config/ConfigUrl";
 const GenerateRefreshToken = () => {
   const refreshtoken = sessionStorage.getItem("refreshToken")
   const isLoggedIn = sessionStorage.getItem("isLoggedIn")
+
   useEffect(() => {
-    if(isLoggedIn){
+    if(isLoggedIn && refreshtoken){
       const refreshToken = async () => {
         try {
           const refresh = await axios.post(`${GENERATE_REFRESH_TOKEN}`, {
@@ -14,33 +15,23 @@ const GenerateRefreshToken = () => {
           })
           const { refreshToken } = refresh.data;
           sessionStorage.setItem("refreshToken", refreshToken)
+          sessionStorage.setItem("generateTokenRefresh", Date.now().toString());
+          console.log("Token generated successfully!");
         } catch (error) {
           console.error("Failed to refresh token:", error);
         }
       }; 
 
-      const storedTime = sessionStorage.getItem("tokenRefreshTime");
-      const refreshInterval = 3600000;
+      const storedTime = sessionStorage.getItem("generateTokenRefresh");
+      const refreshInterval = 3600000 - 1000;
 
-      if(storedTime){
-        const elapsedTime = Date.now() - parseInt(storedTime, 10);
-        const remainingTime = refreshInterval - elapsedTime;
-
-        if(remainingTime > 0){
-          const timeoutId = setTimeout(() => {
-            refreshToken();
-            sessionStorage.setItem("tokenRefreshTime", Date.now().toString());
-          }, remainingTime);
-          return () => clearTimeout(timeoutId);
-        }
+      if (!storedTime || Date.now() - parseInt(storedTime, 10) > refreshInterval) {
+        refreshToken(); 
       }
+     
+      const intervalId = setInterval(refreshToken, refreshInterval);
 
-      const timeoutId = setTimeout(() => {
-        refreshToken();
-        sessionStorage.setItem("tokenRefreshTime", Date.now().toString());
-      }, refreshInterval)
-
-      return () => clearInterval(timeoutId);
+      return () => clearInterval(intervalId);
     } 
   }, [isLoggedIn, refreshtoken]);
 

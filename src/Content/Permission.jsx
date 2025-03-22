@@ -2,11 +2,16 @@ import { Fragment, useEffect, useState } from "react"
 import DynamicTable from "../Table/DynamicTable"
 import axios from "axios";
 import { MENU_SERVICE_PERMISSON } from "../Config/ConfigUrl";
+import PermissionModal from "../Modal/PermissionModal/PermissionModal";
 
 
 const Permission = () => {
 
-  const [permissionData, setPermissionData] = useState([])
+  const [permissionData, setPermissionData] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [permissionToEdit, setPermissionToEdit] = useState({});
+  const [permissionToDelete, setPermissionToDelete] = useState('');
+  
   const namaTable = "Daftar Permission";
 
   const fetchPermissionData = async () => {
@@ -46,17 +51,17 @@ const Permission = () => {
         <DynamicTable
           tableName={namaTable}
           dataTable={permissionData}
-          // setDataToEdit={setRoleToEdit}
-          // setIsRoleModalOpen={setIsModalOpen}
-          // setDataToDelete={setRoleToDelete}
+          setDataToEdit={setPermissionToEdit}
+          setIsPermissionModalOpen={setIsModalOpen}
+          setDataToDelete={setPermissionToDelete}
         />
-        {/* <RoleModal
-        isModalOpen={isModalOpen}
-        roleToEdit={roleToEdit}
-        setIsModalOpen={setIsModalOpen}
-        fetchRoles={fetchRoles}
-        roleToDelete={roleToDelete}
-        /> */}
+        <PermissionModal
+          isModalOpen={isModalOpen}
+          permissionToEdit={permissionToEdit}
+          setIsModalOpen={setIsModalOpen}
+          fetchPermissionData={fetchPermissionData}
+          permissionToDelete={permissionToDelete}
+        />
       </section>
     </Fragment>
   )

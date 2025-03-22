@@ -11,7 +11,8 @@ const DynamicTable = ({
   setDataToDelete,
   setIsModuleModalOpen,
   setIsMenuModalOpen,
-  setIsUserModalOpen
+  setIsUserModalOpen,
+  setIsPermissionModalOpen
 }) => {
 
   if (!Array.isArray(dataTable) || dataTable.length === 0) {
@@ -88,6 +89,18 @@ const DynamicTable = ({
         setDataToDelete(id)
       } else {
         setDataToDelete()
+      }
+    } else if (tableName === "Daftar Permission"){
+      setIsPermissionModalOpen(true);
+      if(id){
+        setDataToEdit(id);
+      }else{
+        setDataToEdit();
+      };
+      if(isDelete){
+        setDataToDelete(id);
+      }else{
+        setDataToDelete();
       }
     }
   }
@@ -190,7 +203,8 @@ DynamicTable.propTypes = {
 
   setIsModuleModalOpen: PropTypes.any,
   setIsMenuModalOpen: PropTypes.any,
-  setIsUserModalOpen: PropTypes.any
+  setIsUserModalOpen: PropTypes.any,
+  setIsPermissionModalOpen: PropTypes.any
 }
 
 
