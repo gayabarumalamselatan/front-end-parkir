@@ -3,14 +3,17 @@ import DynamicTable from "../Table/DynamicTable"
 import { Fragment, useEffect, useState } from "react"
 import { AUTH_SERVICE_ROLE } from "../Config/ConfigUrl"
 import RoleModal from "../Modal/Role/RoleModal"
+import RolePermissionModal from "../Modal/Role/RolePermissionModal"
 
 const ManajemenRole = () => {
 
   const [roleData, setRoleData] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRolePermissionModalOpen, setIsRolePermissionModalOpen] = useState(false);
   const [roleToEdit, setRoleToEdit] = useState({})
   const [roleToDelete, setRoleToDelete] = useState('')
   const namaTable = "Daftar Role"
+
 
   const fetchRoles = async () => {
     try {
@@ -25,6 +28,7 @@ const ManajemenRole = () => {
     fetchRoles()
   },[])
 
+  console.log('roletoedit', roleToEdit)
   return (
    <Fragment>
       <section className="content-header">
@@ -52,6 +56,7 @@ const ManajemenRole = () => {
           setDataToEdit={setRoleToEdit}
           setIsRoleModalOpen={setIsModalOpen}
           setDataToDelete={setRoleToDelete}
+          setIsRolePermissionModalOpen={setIsRolePermissionModalOpen}
         />
         <RoleModal
         isModalOpen={isModalOpen}
@@ -59,7 +64,15 @@ const ManajemenRole = () => {
         setIsModalOpen={setIsModalOpen}
         fetchRoles={fetchRoles}
         roleToDelete={roleToDelete}
+        
         />
+
+        <RolePermissionModal
+          roleToEdit={roleToEdit}
+          isModalOpen = {isRolePermissionModalOpen}
+          setIsModalOpen = {setIsRolePermissionModalOpen}
+        />
+      
       </section>
     </Fragment>
   )

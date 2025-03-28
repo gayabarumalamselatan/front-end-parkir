@@ -11,6 +11,7 @@ export const MENU_SERVICE_BASE = import.meta.env.VITE_MENU_SERVICE_BASE
   export const MENU_SERVICE_MODULE = `${MENU_SERVICE_BASE}/menu-service/module`
   export const MENU_SERVICE_MENU = `${MENU_SERVICE_BASE}/menu-service/menu`
   export const MENU_SERVICE_MODULE_WITH_MENU = `${MENU_SERVICE_BASE}/menu-service/module-with-menu`
+  export const MENU_SERVICE_ALL_MODULE_MENU = `${MENU_SERVICE_BASE}/menu-service/all-module-menu`
   export const MENU_SERVICE_PERMISSON = `${MENU_SERVICE_BASE}/menu-service/permission`
 
 export const MEMBER_SERVICE_BASE = import.meta.env.VITE_MEMBER_SERVICE_BASE

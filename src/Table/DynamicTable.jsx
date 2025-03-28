@@ -1,4 +1,4 @@
-import {  faAdd, faCaretLeft, faCaretRight, faEdit } from "@fortawesome/free-solid-svg-icons";
+import {  faAdd, faCaretLeft, faCaretRight, faEdit, faLock } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types"
@@ -12,7 +12,8 @@ const DynamicTable = ({
   setIsModuleModalOpen,
   setIsMenuModalOpen,
   setIsUserModalOpen,
-  setIsPermissionModalOpen
+  setIsPermissionModalOpen,
+  setIsRolePermissionModalOpen
 }) => {
 
   if (!Array.isArray(dataTable) || dataTable.length === 0) {
@@ -38,73 +39,32 @@ const DynamicTable = ({
       return "Tambah"
     }
   }
-
+  
   const modalHandler = (tableName, id, isDelete) => {
-    console.log(tableName)
-    if(tableName === 'Daftar Role') {
-      setIsRoleModalOpen(true)
-      if(id){
-        setDataToEdit(id)
-      } else {
-        setDataToEdit()
-      } 
-      if (isDelete) {
-        setDataToDelete(id)
-      }else{
-        setDataToDelete()
-      }
-    } else if (tableName === 'Daftar Modul') {
-      setIsModuleModalOpen(true)
-      if(id){
-        setDataToEdit(id)
-      } else {
-        setDataToEdit()
-      }
-
-      if(isDelete) {
-        setDataToDelete(id)
-      }else{
-        setDataToDelete()
-      }
-    } else if (tableName === 'Daftar Menu') {
-      setIsMenuModalOpen(true)
-      if(id) {
-        setDataToEdit(id)
-      } else {
-        setDataToEdit()
-      }
-      if(isDelete) {
-        setDataToDelete(id)
-      }else{
-        setDataToDelete()
-      }
-    } else if(tableName === 'Daftar Pengguna') {
-      setIsUserModalOpen(true)
-      if(id){
-        setDataToEdit(id)
-      }else{
-        setDataToEdit()
-      }
-      if(isDelete){
-        setDataToDelete(id)
-      } else {
-        setDataToDelete()
-      }
-    } else if (tableName === "Daftar Permission"){
-      setIsPermissionModalOpen(true);
-      if(id){
-        setDataToEdit(id);
-      }else{
-        setDataToEdit();
-      };
-      if(isDelete){
-        setDataToDelete(id);
-      }else{
-        setDataToDelete();
-      }
+    console.log(tableName);
+  
+    const modalStateMap = {
+      "Daftar Role": setIsRoleModalOpen,
+      "Daftar Modul": setIsModuleModalOpen,
+      "Daftar Menu": setIsMenuModalOpen,
+      "Daftar Pengguna": setIsUserModalOpen,
+      "Daftar Permission": setIsPermissionModalOpen,
+    };
+  
+    const setModalOpen = modalStateMap[tableName];
+    if (setModalOpen) {
+      setModalOpen(true);
+      setDataToEdit(id || null);
+      setDataToDelete(isDelete ? id : null);
     }
+  };
+
+  const rolePermissionHandler = (id) => {
+    setIsRolePermissionModalOpen(true)
+    setDataToEdit(id)
+    console.log('datatoedit', id)
   }
- 
+  
   return (
     <>
       <div className="card card-default mx-4 mb-4 rounded-mainCard">
@@ -169,6 +129,19 @@ const DynamicTable = ({
                     >
                       <FontAwesomeIcon icon={faTrash}/>
                     </button>
+                    {
+                      tableName === "Daftar Role" ? 
+                      <button
+                        className="bg-mainColor w-10 h-10 rounded text-white hover:bg-blue-900 ms-2"
+                        onClick={()=>
+                          rolePermissionHandler(row)
+                        }
+                      >
+                        <FontAwesomeIcon icon={faLock}/>
+                      </button>
+                      :
+                      <></>
+                    }
                   </td>
                   {headers.map((header) => (
                     <td key={header} className="px-3 py-2 border">
@@ -204,7 +177,8 @@ DynamicTable.propTypes = {
   setIsModuleModalOpen: PropTypes.any,
   setIsMenuModalOpen: PropTypes.any,
   setIsUserModalOpen: PropTypes.any,
-  setIsPermissionModalOpen: PropTypes.any
+  setIsPermissionModalOpen: PropTypes.any,
+  setIsRolePermissionModalOpen: PropTypes.bool
 }
 
 

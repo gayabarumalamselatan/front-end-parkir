@@ -7,7 +7,7 @@ const GenerateRefreshToken = () => {
   const isLoggedIn = sessionStorage.getItem("isLoggedIn")
 
   useEffect(() => {
-    if(isLoggedIn && refreshtoken){
+    if(isLoggedIn){
       const refreshToken = async () => {
         try {
           const refresh = await axios.post(`${GENERATE_REFRESH_TOKEN}`, {
@@ -33,7 +33,7 @@ const GenerateRefreshToken = () => {
 
       return () => clearInterval(intervalId);
     } 
-  }, [isLoggedIn, refreshtoken]);
+  }, [isLoggedIn]);
 
   return null;
 };

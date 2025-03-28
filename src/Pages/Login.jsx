@@ -32,6 +32,7 @@ const LoginPage = () => {
         sessionStorage.setItem('userName', response.data.userName)
         sessionStorage.setItem('accessToken', response.data.accessToken)
         sessionStorage.setItem('refreshToken', response.data.refreshToken)
+        sessionStorage.setItem('roleId', response.data.role_id)
       }
       console.log(JSON.stringify(response?.data));
       navigate("/");
