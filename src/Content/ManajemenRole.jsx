@@ -28,6 +28,8 @@ const ManajemenRole = () => {
     fetchRoles()
   },[])
 
+  console.log('permissionmodals', isRolePermissionModalOpen)
+
   console.log('roletoedit', roleToEdit)
   return (
    <Fragment>
@@ -59,12 +61,11 @@ const ManajemenRole = () => {
           setIsRolePermissionModalOpen={setIsRolePermissionModalOpen}
         />
         <RoleModal
-        isModalOpen={isModalOpen}
-        roleToEdit={roleToEdit}
-        setIsModalOpen={setIsModalOpen}
-        fetchRoles={fetchRoles}
-        roleToDelete={roleToDelete}
-        
+          isModalOpen={isModalOpen}
+          roleToEdit={roleToEdit}
+          setIsModalOpen={setIsModalOpen}
+          fetchRoles={fetchRoles}
+          roleToDelete={roleToDelete}
         />
 
         <RolePermissionModal

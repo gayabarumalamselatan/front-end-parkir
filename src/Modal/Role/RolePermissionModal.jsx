@@ -76,19 +76,6 @@ const RolePermissionModal = ({
     setPermissionArray([])
   }
 
-  const handleSubmit = () => {
-
-  }
-
-  // const permissionHandler = (moduleId, menuId) => {
-  //   console.log('permission', moduleId, menuId)
-  //   setPermissionArray({
-  //     ...permissionArray,
-  //     module_id: moduleId,
-  //     menu_id: menuId
-  //   })
-  // }
-
 
   const permissionHandler = (moduleId, menuId) => {
     const newPermission = {
@@ -130,61 +117,93 @@ const RolePermissionModal = ({
         </div>
         {/* Modal Body */}
         
-        <div>
-          <div className="grid grid-cols-2">
-            <div>
-              head
-            </div>
-            <div>
-              Permit
-            </div>
+        <div className="p-6">
+          {/* Header Section */}
+          <div className="grid grid-cols-2 border-b pb-2 mb-4 font-semibold text-lg">
+            <div>Head</div>
+            <div>Permit</div>
           </div>
-          <div className="grid grid-cols-2">
+
+          {/* Data Section */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Module Names & Menus */}
             <div>
-               {Array.isArray(moduleMenuData) && moduleMenuData.map((module) => (
-                <div key={module.id}>
-                    <p>{module.module_name}</p>
+              {Array.isArray(moduleMenuData) &&
+                moduleMenuData.map((module) => (
+                  <div key={module.id} className="mb-2">
+                    {/* Module Name */}
+                    <p className="font-medium text-gray-800">{module.module_name}</p>
+
+                    {/* Menus (Indented) */}
                     {module.menus && Array.isArray(module.menus) && module.menus.length > 0 && (
-                        <div style={{ paddingLeft: '20px' }}> {/* Indentation for menus */}
-                            {module.menus.map((menu) => (
-                                <p key={menu.id}>{menu.menu_name}</p>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            ))}
-            </div>
-           
-           
-            <div>
-            {Array.isArray(moduleMenuData) &&
-              moduleMenuData.map((module) => (
-                <div key={module.id}>
-                  <input
-                    type="checkbox"
-                    checked={permissionArray.some(perm => perm.module_id === module.id && perm.menu_id === null) || permissionData.find(i => i.role_id === roleToEdit.id && i.module_id === module.id)}
-                    onChange={() => permissionHandler(module.id, null)} 
-                  />
-                  {module.menus &&
-                    Array.isArray(module.menus) &&
-                    module.menus.length > 0 && (
-                      <div>
+                      <div className="pl-6 text-gray-600">
                         {module.menus.map((menu) => (
-                          <div key={menu.id}>
-                            <input
-                              type="checkbox" 
-                              checked={permissionArray.some(perm => perm.module_id === module.id && perm.menu_id === menu.id) || permissionData.find(i => i.role_id === roleToEdit.id && i.menu_id === menu.id)}
-                              onChange={() => permissionHandler(module.id, menu.id )}
-                            />
-                          </div>
+                          <p key={menu.id} className="text-sm">{menu.menu_name}</p>
                         ))}
                       </div>
                     )}
-                </div>
-              ))}
+                  </div>
+                ))}
+            </div>
+
+            {/* Permission Checkboxes */}
+            <div>
+              {Array.isArray(moduleMenuData) &&
+                moduleMenuData.map((module) => (
+                  <div key={module.id} className="mb-2">
+                    {/* Module Checkbox */}
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        disabled
+                        checked={
+                          roleToEdit
+                            ? permissionArray.some(
+                                (perm) => perm.module_id === module.id && perm.menu_id === null
+                              ) ||
+                              permissionData.find(
+                                (i) => i.role_id === roleToEdit.id && i.module_id === module.id
+                              )
+                            : false 
+                        }
+                        onChange={() => permissionHandler(module.id, null)}
+                        className="w-4 h-4 accent-blue-600"
+                      />
+                      <span className="text-gray-800 font-medium">{module.module_name}</span>
+                    </label>
+
+                    {/* Menus Checkboxes */}
+                    {module.menus && Array.isArray(module.menus) && module.menus.length > 0 && (
+                      <div className="pl-6">
+                        {module.menus.map((menu) => (
+                          <label key={menu.id} className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              disabled
+                              checked={
+                                roleToEdit
+                                  ? permissionArray.some(
+                                      (perm) => perm.module_id === module.id && perm.menu_id === menu.id
+                                    ) ||
+                                    permissionData.find(
+                                      (i) => i.role_id === roleToEdit.id && i.menu_id === menu.id
+                                    )
+                                  : false
+                              }
+                              onChange={() => permissionHandler(module.id, menu.id)}
+                              className="w-4 h-4 accent-blue-600"
+                            />
+                            <span className="text-gray-600 text-sm">{menu.menu_name}</span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
             </div>
           </div>
         </div>
+
         
         {/* Modal Footer */}
         <div className="flex justify-end p-3 border-t">
@@ -192,15 +211,9 @@ const RolePermissionModal = ({
             onClick={handleCloseModal}
             className="mr-2 px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
           >
-            Batal
+            Tutup
           </button>
           
-            <button
-              onClick={handleSubmit}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Simpan
-            </button>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import {  faAdd, faCaretLeft, faCaretRight, faEdit, faLock } from "@fortawesome/free-solid-svg-icons";
+import {  faAdd, faCaretLeft, faCaretRight, faEdit, faEye } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types"
@@ -137,7 +137,7 @@ const DynamicTable = ({
                           rolePermissionHandler(row)
                         }
                       >
-                        <FontAwesomeIcon icon={faLock}/>
+                        <FontAwesomeIcon icon={faEye}/>
                       </button>
                       :
                       <></>
