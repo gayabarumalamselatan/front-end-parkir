@@ -43,7 +43,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="app-wrapper">
+    <div className="app-wrappers">
       <Nav toggleSidebar={toggleSidebar}/>
       <Sidebar show={sidebarOpen} menuData={menuData}/>
       {isLoading ? (
