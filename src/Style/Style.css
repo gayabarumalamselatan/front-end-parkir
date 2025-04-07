@@ -48,20 +48,6 @@
   z-index: 2;
 }
 
-.app-wrappers {
-  position: relative;
-  display: grid;
-  grid-template-areas: "lte-app-sidebar lte-app-header" "lte-app-sidebar lte-app-main" "lte-app-sidebar lte-app-footer";
-  grid-template-rows: -webkit-min-content 1fr -webkit-min-content;
-  grid-template-rows: min-content 1fr min-content;
-  grid-template-columns: auto 1fr;
-  grid-gap: 0;
-  align-content: stretch;
-  align-items: stretch;
-  max-width: 100vw;
-  min-height: 100vh;
-}
-
 /* Login input */
 .form-control.rounded-pill {
   background: rgba(255, 255, 255, 0.15);
