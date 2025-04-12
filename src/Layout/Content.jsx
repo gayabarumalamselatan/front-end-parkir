@@ -3,7 +3,8 @@ import { Route, Routes } from "react-router-dom";
 import Home from "../Content/Home";
 import PageNotFound from "../Content/PageNotFound";
 import PropTypes from "prop-types";
-
+import Lottie from "lottie-react";
+import loadingScreen from '../animation/general-loading-anim.json'
 
 const Content = ({menuData}) => {
 
@@ -15,7 +16,17 @@ const Content = ({menuData}) => {
     );
   
     return (
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={
+        <div className="flex justify-center items-center h-screen"> 
+          <Lottie 
+            animationData={loadingScreen}
+            style={{
+              width: "150px",
+              height:"auto"
+            }}  
+          />
+        </div>
+      }>
         <Component />
       </Suspense>
     );

@@ -46,53 +46,45 @@ const MemberTable = ({dataTable}) => {
       </div>
       <div className="bg-white shadow-md rounded-mainCard overflow-hidden mx-4">
         <div className="bg-mainColor text-white px-4 py-2 font-semibold">Daftar Member</div>
-          <div className="overflow-x-auto m-7">
-            <table className="w-full text-sm text-left border border-gray-200 min-w-max">
-              <thead className="bg-gray-100 text-gray-700">
-                <tr>
-                  
-                  {headers.map((header) => (
-                    <th key={header} className="px-3 py-2 border">
-                      {header.replace(/_/g, ' ').toUpperCase()}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-              {dataTable.map((row, index) => (
-                <tr key={index} className="border">
-                  {/* <td className="px-3 py-2 text-start">
-                    <button 
-                      className="bg-mainColor w-10 h-10 rounded text-white hover:bg-blue-900"
-                      onClick={() => modalHandler(tableName, row)}
-                    >
-                      <FontAwesomeIcon icon={faEdit}/>
-                    </button>
-                    <button 
-                      className="bg-red-700 w-10 h-10 rounded text-white hover:bg-red-800 ml-2"
-                      onClick={() => modalHandler(tableName, row, true)}
-                    >
-                      <FontAwesomeIcon icon={faTrash}/>
-                    </button>
-                  </td> */}
-                  {headers.map((header) => (
-                    <td key={header} className="px-3 py-2 border">
-                      {row[header] ?? "-"}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-              </tbody>
-            </table>
+        <div className="overflow-x-auto m-7" style={{scrollbarWidth: "none"}}>
+
+          <table className="w-full text-sm text-left  min-w-max">
+            <thead className=" text-gray-700">
+              <tr>
+                <th className="border-e-2 border-b-2 border-slate-300 px-3">No</th>
+                {headers.map((header) => (
+                  <th key={header} className="px-3 py-2 border-b-2 border-slate-300 border-e-2 last:border-e-0">
+                    {header.replace(/_/g, ' ').toUpperCase()}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+            {dataTable.map((row, index) => (
+              <tr key={index} className="even:bg-slate-100">
+                <td className="border-e-2 border-slate-300 px-3">
+                  {index+1}
+                </td>
+                {headers.map((header) => (
+                  <td key={header} className='px-3 py-2 border-e-2 border-slate-300 last:border-e-0'>
+                    {row[header] ?? "-"}
+                  </td>
+                ))}
+              </tr>
+            ))}
+            </tbody>
+          </table>
+
         </div>
+        
         <div className="flex justify-between border-t items-center px-4 py-2 text-sm text-gray-600">
-            <span className="font-semibold text-mainColor">Menampilkan 1 - 4 dari 8 data</span>
-            <div className="flex space-x-1">
-                <button className="px-2 py-1 border rounded hover:bg-gray-100"><FontAwesomeIcon icon={faCaretLeft}/></button>
-                <button className="px-3 py-1 bg-blue-600 text-white rounded">1</button>
-                <button className="px-3 py-1 border rounded hover:bg-gray-100">2</button>
-                <button className="px-2 py-1 border rounded hover:bg-gray-100"><FontAwesomeIcon icon={faCaretRight}/></button>
-            </div>
+          <span className="font-semibold text-mainColor">Menampilkan 1 - 4 dari 8 data</span>
+          <div className="flex space-x-1">
+              <button className="px-2 py-1 border rounded hover:bg-gray-100"><FontAwesomeIcon icon={faCaretLeft}/></button>
+              <button className="px-3 py-1 bg-blue-600 text-white rounded">1</button>
+              <button className="px-3 py-1 border rounded hover:bg-gray-100">2</button>
+              <button className="px-2 py-1 border rounded hover:bg-gray-100"><FontAwesomeIcon icon={faCaretRight}/></button>
+          </div>
         </div>
       </div>
     </>

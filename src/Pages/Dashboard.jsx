@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import Content from "../Layout/Content";
 import axios from "axios";
 import { MENU_SERVICE_MODULE_WITH_MENU } from "../Config/ConfigUrl";
+import Lottie from "lottie-react";
+import loadingScreen from '../animation/general-loading-anim.json'
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -47,7 +49,17 @@ const Dashboard = () => {
       <Nav toggleSidebar={toggleSidebar}/>
       <Sidebar show={sidebarOpen} menuData={menuData}/>
       {isLoading ? (
-        <div className="loading-indicator">Loading </div> // Loading indicator
+        <div className="app-main">
+          <div className="flex justify-center items-center h-screen"> 
+            <Lottie 
+              animationData={loadingScreen}
+              style={{
+                width: "150px",
+                height:"auto"
+              }}  
+            />
+          </div>
+        </div>
       ) : (
         <Content menuData={menuData} />
       )}

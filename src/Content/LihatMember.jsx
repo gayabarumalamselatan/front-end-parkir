@@ -2,21 +2,24 @@ import axios from "axios";
 import { Fragment, useEffect, useState } from "react"
 import { MEMBER_SERVICE_API } from "../Config/ConfigUrl";
 import MemberTable from "../Table/MemberTable";
-
+import DateFormatter from "../Service/DateFormatter";
 
 const LihatMember = () => {
 
-  const [memberData, setMemberData] = useState([]);
+  const [memberData, setMemberData] = useState([])
 
   const fetchMember = async () => {
     try {
       const response = await axios.get(`${MEMBER_SERVICE_API}`);
-      setMemberData(response.data);
+      const dateFields = ['tanggal_masuk', 'tanggal_kadaluarsa']; 
+      // eslint-disable-next-line no-unused-vars
+      const formattedData = DateFormatter(response.data, dateFields).map(({id, is_black_list, ...rest}) => rest);
+      setMemberData(formattedData);
     } catch (error) {
       console.error(error)
     }
   }
-
+  console.log(memberData)
   useEffect(() => {
     fetchMember()
   },[])
@@ -59,5 +62,6 @@ const LihatMember = () => {
         </Fragment>
   )
 }
+
 
 export default LihatMember

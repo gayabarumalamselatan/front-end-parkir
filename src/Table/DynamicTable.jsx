@@ -16,12 +16,15 @@ const DynamicTable = ({
   setIsRolePermissionModalOpen
 }) => {
 
+  // eslint-disable-next-line no-unused-vars
+  const formattedData = dataTable.map(({id, ...rest}) => rest);
+
   if (!Array.isArray(dataTable) || dataTable.length === 0) {
     return <p className="text-center text-gray-500">No data available</p>;
   }
 
   console.log(dataTable)
-  const headers = dataTable.length > 0 ? Object.keys(dataTable[0]) : [];
+  const headers = formattedData.length > 0 ? Object.keys(formattedData[0]) : [];
   console.log(headers)
 
   const AddButtonNaming = (tableName) => {
@@ -102,21 +105,30 @@ const DynamicTable = ({
       <div className="bg-white shadow-md rounded-mainCard overflow-hidden mx-4">
         <div className="bg-mainColor text-white px-4 py-2 font-semibold">{tableName}</div>
           <div className="overflow-x-auto m-7">
-            <table className="w-full text-sm text-left border border-gray-200 min-w-max">
-              <thead className="bg-gray-100 text-gray-700">
+            <table className="w-full text-sm text-left min-w-max">
+              <thead className="text-gray-700">
                 <tr>
-                  <th className="px-3 py-2 border">Aksi</th>
+                  <th className="px-3 py-2 border-b-2 border-slate-300 border-e-2 last:border-e-0">No</th>
                   {headers.map((header) => (
-                    <th key={header} className="px-3 py-2 border">
+                    <th key={header} className="px-3 py-2 border-b-2 border-slate-300 border-e-2 last:border-e-0">
                       {header.replace(/_/g, ' ').toUpperCase()}
                     </th>
                   ))}
+                  <th className="px-3 py-2 border-b-2 border-slate-300 border-e-2 last:border-e-0">Aksi</th>
                 </tr>
               </thead>
               <tbody>
-              {dataTable.map((row, index) => (
-                <tr key={index} className="border">
-                  <td className="px-3 py-2 text-start">
+              {formattedData.map((row, index) => (
+                <tr key={index} className="even:bg-slate-100">
+                  <td className="px-3 py-2 border-e-2 border-slate-300 last:border-e-0">
+                    {index+1}
+                  </td>
+                  {headers.map((header) => (
+                    <td key={header} className="px-3 py-2 border-e-2 border-slate-300 last:border-e-0">
+                      {row[header] ?? "-"}
+                    </td>
+                  ))}
+                  <td className="px-3 py-2 text-start border-e-2 border-slate-300 last:border-e-0">
                     <button 
                       className="bg-mainColor w-10 h-10 rounded text-white hover:bg-blue-900"
                       onClick={() => modalHandler(tableName, row)}
@@ -143,11 +155,6 @@ const DynamicTable = ({
                       <></>
                     }
                   </td>
-                  {headers.map((header) => (
-                    <td key={header} className="px-3 py-2 border">
-                      {row[header] ?? "-"}
-                    </td>
-                  ))}
                 </tr>
               ))}
               </tbody>

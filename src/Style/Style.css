@@ -5,7 +5,7 @@
 .background-image {
   position: relative;
   overflow: hidden;
-  background-image: url("/public/assets/img/mainBackground.jpg");
+  background-image: url("/assets/img/mainBackground.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -27,7 +27,7 @@
 .app-header.navbar.navbar-expand.bg-body {
   position: relative;
   overflow: hidden;
-  background-image: url("/public/assets/img/mainBackground.jpg");
+  background-image: url("/assets/img/mainBackground.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -97,7 +97,7 @@ li.nav-item > a.nav-link:hover {
 
 /* Jumbotron */
 .jumbotron-bg {
-  background-image: url("/public/assets/img/Jumbotronbg.jpg");
+  background-image: url("/assets/img/Jumbotronbg.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
