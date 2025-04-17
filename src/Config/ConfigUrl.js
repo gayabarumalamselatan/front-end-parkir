@@ -16,3 +16,4 @@ export const MENU_SERVICE_BASE = import.meta.env.VITE_MENU_SERVICE_BASE
 
 export const MEMBER_SERVICE_BASE = import.meta.env.VITE_MEMBER_SERVICE_BASE
   export const MEMBER_SERVICE_API = `${MEMBER_SERVICE_BASE}/member-service/member`
+  export const STRUK_SERVICE_API = `${MEMBER_SERVICE_BASE}/member-service/struk`

@@ -1,12 +1,14 @@
 import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Lottie from "lottie-react";
 import PropTypes from "prop-types";
+import LoadingTable from "../animation/Loading-text-anim.json"
 
-const MemberTable = ({dataTable}) => {
+const MemberTable = ({dataTable, isLoading}) => {
 
-  if (!Array.isArray(dataTable) || dataTable.length === 0) {
-    return <p className="text-center text-gray-500">No data available</p>;
-  }
+  // if (!Array.isArray(dataTable) || dataTable.length === 0) {
+  //   return <p className="text-center text-gray-500">No data available</p>;
+  // }
 
   const headers = dataTable.length > 0 ? Object.keys(dataTable[0]) : [];
 
@@ -49,7 +51,21 @@ const MemberTable = ({dataTable}) => {
         <div className="overflow-x-auto m-7" style={{scrollbarWidth: "none"}}>
 
           <table className="w-full text-sm text-left  min-w-max">
-            <thead className=" text-gray-700">
+            {
+              isLoading ? 
+              <div>
+                <Lottie 
+                  animationData={LoadingTable}
+                  style={{
+                    height: "200px"
+                  }}
+                />
+              </div> :
+                !Array.isArray(dataTable) || dataTable.length === 0 ?
+                <p className="text-center text-gray-500">No data available</p>
+                :
+              <>
+                <thead className=" text-gray-700">
               <tr>
                 <th className="border-e-2 border-b-2 border-slate-300 px-3">No</th>
                 {headers.map((header) => (
@@ -73,6 +89,9 @@ const MemberTable = ({dataTable}) => {
               </tr>
             ))}
             </tbody>
+              </>
+            }
+            
           </table>
 
         </div>
@@ -92,7 +111,8 @@ const MemberTable = ({dataTable}) => {
 }
 
 MemberTable.propTypes = {
-  dataTable: PropTypes.arrayOf(PropTypes.object)
+  dataTable: PropTypes.arrayOf(PropTypes.object),
+  isLoading: PropTypes.bool
 }
 
 export default MemberTable

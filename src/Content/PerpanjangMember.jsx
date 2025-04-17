@@ -1,12 +1,16 @@
 import axios from "axios"
 import { Fragment, useEffect, useState } from "react"
-import { MEMBER_SERVICE_API } from "../Config/ConfigUrl"
+import { MEMBER_SERVICE_API, STRUK_SERVICE_API } from "../Config/ConfigUrl"
+import Swal from "sweetalert2"
 
 
 const PerpanjangMember = () => {
 
   const [memberData, setMemberData] = useState([])
-  const [perpanjangData, setPerpanjangData] = useState({
+  const [errors, setErrors] = useState({})
+
+  const initData = {
+    id: 0,
     nomor_polisi: '',
     nama_pemilik: '',
     tanggal_masuk: new Date().toISOString().split('T')[0],
@@ -16,7 +20,14 @@ const PerpanjangMember = () => {
     jumlah_pembayaran: 0,
     kadaluarsa_berikutnya: '',
     keterangan: ''
-  });
+  }
+
+  const [perpanjangData, setPerpanjangData] = useState(initData);
+
+  const requiredFields = [
+    {key: 'jangka_perpanjang', label: 'Jangka Waktu Perpanjang'},
+    {key: 'jumlah_pembayaran', label: 'Jumlah Pembayaran'}
+  ]
 
   const fetchMember = async () => {
     try {
@@ -31,16 +42,109 @@ const PerpanjangMember = () => {
   const autofillMember = (data) => {
     console.log("auto", data)
     setPerpanjangData({
+      id: data.id,
+      nama_pemilik: data.nama_pemilik,
       nomor_polisi: data.nomor_polisi,
-      tanggal_masuk: data.tanggal_masuk,
-      tanggal_kadaluarsa: data.tanggal_kadaluarsa,
+      tanggal_masuk: data.tanggal_masuk.split('T')[0],
+      tanggal_kadaluarsa: data.tanggal_kadaluarsa.split('T')[0],
       bulanan: data.bulanan,
+      keterangan: data.keterangan
     })
+    if(!data){
+      setPerpanjangData(initData)
+    }
   }
+
+  const submitPerpanjang = async () => {
+    const newErrors = {}
+    
+    if(!perpanjangData.jangka_perpanjang || !perpanjangData.jumlah_pembayaran){
+      const req = await Swal.fire({
+        title: "Peringatan!",
+        text: "Semua field harus diisi.",
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+      })
+      if(req.isConfirmed){
+        requiredFields.forEach(field => {
+          if(!perpanjangData[field.key]){
+            newErrors[field.key] = `${field.label} harus diisi.`
+          }
+        });
+        if(Object.keys(newErrors).length > 0){
+          setErrors(newErrors)
+        }
+        return;
+      };
+    }
+
+    const confirmSubmit = await Swal.fire({
+      title: 'Yakin?',
+      text: 'Pastikan data sudah terisi dengan benar.',
+      icon:'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Batal',
+      confirmButtonColor: '#004BA0',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Perpanjang',
+      reverseButtons: true
+    })
+
+    if(confirmSubmit.isConfirmed) {
+      setErrors({});
+      const dataToUpdate = {
+        id: perpanjangData.id,
+        tanggal_kadaluarsa: perpanjangData.kadaluarsa_berikutnya.split('T')[0],
+      }
+      console.log('send it', dataToUpdate)
+
+      const dataToCreate = {
+        nomor_polisi: perpanjangData.nomor_polisi,
+        nama_pemilik: perpanjangData.nama_pemilik,
+        tanggal_masuk: perpanjangData.tanggal_masuk,
+        tanggal_kadaluarsa: perpanjangData.tanggal_kadaluarsa,
+        bulanan: perpanjangData.bulanan,
+        tanggal_bayar: new Date().toISOString().split('T')[0],
+        untuk: perpanjangData.jangka_perpanjang,
+        jumlah_pembayaran: parseInt(perpanjangData.jumlah_pembayaran),
+        keterangan: perpanjangData.keterangan,
+        kadaluarsa_berikutnya: perpanjangData.kadaluarsa_berikutnya,
+      }
+
+      try {
+        const [updateMember, createStruk] = await Promise.all([
+          await axios.put(`${MEMBER_SERVICE_API}`, dataToUpdate),
+          await axios.post(`${STRUK_SERVICE_API}`, dataToCreate)
+        ])
+
+        if(updateMember.status === 200 && createStruk.status === 200){
+          Swal.fire({
+            title: 'Yes, Berhasil!', 
+            text: `${perpanjangData.nama_pemilik} berhasil diperpanjang.`,
+            icon: 'success',
+            confirmButtonText: 'OK'
+          })
+          setPerpanjangData(initData);
+        }
+      } catch (error) {
+        console.error(error)
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Ada yang salah nih!"
+        })
+      }
+    }
+  } 
+
 
   useEffect(() => {
     fetchMember()
   },[])
+
+  console.log(perpanjangData)
+  console.log('error', errors)
 
   return (
     <Fragment>
@@ -92,6 +196,7 @@ const PerpanjangMember = () => {
                 </label>
                 <select
                   onChange={(e)=>{
+                    setPerpanjangData(initData)
                     const selectedMember = memberData.find(item => item.nama_pemilik === e.target.value)
                     autofillMember(selectedMember)
                   }}
@@ -167,19 +272,16 @@ const PerpanjangMember = () => {
                   <input
 
                   onChange={(e) => {
-                    const value = e.target.value;
-                    setPerpanjangData({
-                      ...perpanjangData,
-                      jangka_perpanjang: value
-                    })
-                    // const currentDate = perpanjangData.tanggal_kadaluarsa;
-                    
+                    const value = parseInt(e.target.value);
+
                     if(value){
                       const currentDate = new Date(perpanjangData.tanggal_kadaluarsa);
                       console.log(currentDate.toISOString())
-                      currentDate.setMonth(currentDate.getMonth() + parseInt(value));
+                      currentDate.setMonth(currentDate.getMonth() + value);
                       setPerpanjangData({
                         ...perpanjangData,
+                        jangka_perpanjang: value,
+                        // tanggal_kadaluarsa: currentDate.toISOString() || new Date().toISOString().split('T')[0],
                         kadaluarsa_berikutnya: currentDate.toISOString() || new Date().toISOString().split('T')[0]
                       })
                     }                    
@@ -187,10 +289,15 @@ const PerpanjangMember = () => {
                     type="text"
                     className="mt-2 mx-2 block  ps-3 p-2 border border-gray-300 rounded-lg shadow-sm"
                   />
-
                   <p>bulan</p>
-
                 </div>
+
+                {errors.jangka_perpanjang &&
+                  <p className="text-red-500 text-sm">
+                    {errors.jangka_perpanjang}
+                  </p>
+                } 
+
               </div>
 
               <div className="col-span-1">
@@ -198,8 +305,18 @@ const PerpanjangMember = () => {
                 <input
                   type="text"
                   className="mt-2 block w-full ps-3 p-2 border border-gray-300 rounded-lg shadow-sm"
-                  
+                  onChange={(e) => {
+                    setPerpanjangData({
+                      ...perpanjangData,
+                      jumlah_pembayaran: e.target.value
+                    })
+                  }}
                 />
+                {errors.jumlah_pembayaran &&
+                  <p className="text-red-500 text-sm">
+                    {errors.jumlah_pembayaran}
+                  </p>
+                } 
               </div>
 
               <div className="col-span-1">
@@ -227,13 +344,23 @@ const PerpanjangMember = () => {
                 <textarea
                   className="mt-2 block w-full ps-3 p-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500 min-h-8"
                   placeholder="Enter value"
+                  value={perpanjangData.keterangan}
+                  onChange={(e) => {
+                    setPerpanjangData({
+                      ...perpanjangData,
+                      keterangan: e.target.value
+                    })
+                  }}
                 />
               </div>
 
             </div>
 
             <div className="flex justify-end pt-2">
-              <button className="flex justify-end bg-mainColor rounded-xl px-3 py-2 text-white">
+              <button 
+                className="flex justify-end bg-mainColor rounded-xl px-3 py-2 text-white"
+                onClick={submitPerpanjang}
+              >
                 Perpanjang Member
               </button>
             </div>

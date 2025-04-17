@@ -7,16 +7,20 @@ import DateFormatter from "../Service/DateFormatter";
 const LihatMember = () => {
 
   const [memberData, setMemberData] = useState([])
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchMember = async () => {
+    setIsLoading(true)
     try {
       const response = await axios.get(`${MEMBER_SERVICE_API}`);
       const dateFields = ['tanggal_masuk', 'tanggal_kadaluarsa']; 
       // eslint-disable-next-line no-unused-vars
       const formattedData = DateFormatter(response.data, dateFields).map(({id, is_black_list, ...rest}) => rest);
       setMemberData(formattedData);
+      setIsLoading(false);
     } catch (error) {
       console.error(error)
+      setIsLoading(false);
     }
   }
   console.log(memberData)
@@ -47,6 +51,7 @@ const LihatMember = () => {
           <section className="content">
             <MemberTable
               dataTable={memberData}
+              isLoading={isLoading}
               // setDataToEdit={setMenuToEdit}
               // setIsMenuModalOpen={setIsModalOpen}
               // setDataToDelete={setMenuToDelete}

@@ -1,13 +1,16 @@
 import { Fragment, useEffect, useState } from "react"
-import { MEMBER_SERVICE_API } from "../Config/ConfigUrl";
+import { STRUK_SERVICE_API } from "../Config/ConfigUrl";
 import axios from "axios";
 import Select from "react-select";
+import Swal from "sweetalert2";
+import { use } from "react";
 
 
 const CetakStruk = () => {
   const [memberOption, setMemberOption] = useState([]);
   const [selectedMember, setSelectedMember] = useState();
-  const [memberDicetak, setMemberDicetak] = useState({  
+  const [error, setError] = useState();
+  const initialData = {
     nama_pemilik: '',
     tanggal_masuk: '',
     tanggal_kadaluarsa: '',
@@ -17,22 +20,42 @@ const CetakStruk = () => {
     jumlah_pembayaran: 0,
     keterangan: '',
     kadaluarsa_berikutnya: '',
-  })
+    nomor_polisi: '',
+  }
+  const [memberDicetak, setMemberDicetak] = useState(initialData);
 
   const fetchMember = async  () => {
     try {
-      const response = await axios.get(`${MEMBER_SERVICE_API}`);
-      const mappedOption = response.data.map(item =>({
+      const response = await axios.get(`${STRUK_SERVICE_API}`);
+      
+
+      const latestStruk = {};
+
+      response.data.data.forEach(item => {
+        const {nomor_polisi, id} = item;
+
+        // Yen nomor_polisi durung ana ing peta utawa id sing saiki luwih gedhe, engkas diowahi petane.
+        if(!latestStruk[nomor_polisi] || id > latestStruk[nomor_polisi].id){
+          latestStruk[nomor_polisi] = item;
+        }
+      })
+      console.log('mapped', latestStruk)
+      const mappedOption = Object.values(latestStruk).filter(item => !item.has_printed).map(item =>({
         id: item.id,
         value: item.nomor_polisi,
         label: item.nomor_polisi,
-        nomor_pengganti: item.nomor_pengganti,
+        nomor_polisi: item.nomor_polisi,
         nama_pemilik: item.nama_pemilik,
         tanggal_masuk: item.tanggal_masuk,
         tanggal_kadaluarsa: item.tanggal_kadaluarsa,
-        bulanan: item.bulanan
+        bulanan: item.bulanan,
+        tanggal_bayar: item.tanggal_bayar,
+        jangka_perpanjang: item.untuk,
+        jumlah_pembayaran: item.jumlah_pembayaran,
+        keterangan: item.keterangan,
+        kadaluarsa_berikutnya: item.kadaluarsa_berikutnya
       }))
-      console.log('mapped', mappedOption)
+      
       setMemberOption(mappedOption)
       
     } catch (error) {
@@ -44,34 +67,82 @@ const CetakStruk = () => {
     fetchMember();
   },[])
 
+  console.log('memberdicetak', memberDicetak)
   const selectMemberHandler = (e) => {
     if(e){
       setSelectedMember(e)
       setMemberDicetak({
-        nomor_pengganti: e.nomor_pengganti,
+        id: e.id,
+        nomor_polisi: e.nomor_polisi,
         nama_pemilik: e.nama_pemilik,
         tanggal_masuk: e.tanggal_masuk.split('T')[0],
         tanggal_kadaluarsa: e.tanggal_kadaluarsa.split('T')[0],
         bulanan: e.bulanan,
         tanggal_bayar: new Date().toISOString().split('T')[0],
-        jangka_perpanjang: 0,
-        jumlah_pembayaran: 0,
-        keterangan: '',
-        kadaluarsa_berikutnya: '',
+        jangka_perpanjang: e.jangka_perpanjang,
+        jumlah_pembayaran: e.jumlah_pembayaran,
+        keterangan: e.keterangan,
+        kadaluarsa_berikutnya: e.kadaluarsa_berikutnya.split('T')[0],
       })
+      setError()
     }else{
       setSelectedMember()
-      setMemberDicetak({
-        nama_pemilik: '',
-        tanggal_masuk: '',
-        tanggal_kadaluarsa: '',
-        bulanan: '',
-        tanggal_bayar: new Date().toISOString.split('T')[0],
-        jangka_perpanjang: 0,
-        jumlah_pembayaran: 0,
-        keterangan: '',
-        kadaluarsa_berikutnya: '',
+      setMemberDicetak(initialData)
+    }
+  }
+
+  const submitCetak = async () => {
+    if(!selectedMember) {
+      const warn = await Swal.fire({
+        title: 'Peringatan!',
+        text: 'Harap pilih plat nomor terlebih dahulu.',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
       })
+      if(warn.isConfirmed) {
+        setError('Isi plat nomor terlebih dahulu');
+        return;
+      }
+    }
+
+    const confirmCetak = await Swal.fire({
+      title: 'Yakin?',
+      text: 'Pastikan data sudah terisi dengan benar.',
+      icon:'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Batal',
+      confirmButtonColor: '#004BA0',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Cetak',
+      reverseButtons: true
+    })
+
+    if(confirmCetak.isConfirmed){
+      setError();
+      const dataToUpdate = {
+        id: memberDicetak.id,
+        has_printed: true,
+      }
+      
+      try {
+        const result = await axios.put(`${STRUK_SERVICE_API}`, dataToUpdate);
+        if(result.status === 200) {
+          Swal.fire({
+            title: 'Yes, Berhasil!', 
+            text: `${memberDicetak.nama_pemilik} berhasil dicetak.`,
+            icon: 'success',
+            confirmButtonText: 'OK'
+          })
+        }
+      } catch (error) {
+        console.error(error)
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Ada yang salah nih!"
+        })
+      }
     }
   }
 
@@ -114,6 +185,9 @@ const CetakStruk = () => {
                   onChange={(e) => selectMemberHandler(e)}
                   isClearable
                 />
+                {error && 
+                  <p className="text-red-500">{error}</p>
+                }
               </div>
 
               <div className="col-span-1">
@@ -267,6 +341,15 @@ const CetakStruk = () => {
               </div>
 
             </div>
+
+            <div className="flex justify-end mt-4">
+              <button 
+                onClick={submitCetak}
+                className="bg-mainColor rounded-xl px-4 py-2 text-white">
+                Cetak
+              </button>
+            </div>
+
           </div>
         </div>
       </section>
