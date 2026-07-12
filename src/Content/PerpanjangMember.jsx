@@ -6,9 +6,6 @@ import Swal from "sweetalert2"
 
 const PerpanjangMember = () => {
 
-  const [memberData, setMemberData] = useState([])
-  const [errors, setErrors] = useState({})
-
   const initData = {
     id: 0,
     nomor_polisi: '',
@@ -21,7 +18,8 @@ const PerpanjangMember = () => {
     kadaluarsa_berikutnya: '',
     keterangan: ''
   }
-
+  const [memberData, setMemberData] = useState([])
+  const [errors, setErrors] = useState({})
   const [perpanjangData, setPerpanjangData] = useState(initData);
 
   const requiredFields = [
@@ -31,8 +29,8 @@ const PerpanjangMember = () => {
 
   const fetchMember = async () => {
     try {
-      const response = await axios.get(`${MEMBER_SERVICE_API}`);
-      setMemberData(response.data) 
+      const response = await axios.get(`${MEMBER_SERVICE_API}?limit=1000`);
+      setMemberData(response.data.data || []) 
       console.log(memberData)
     } catch (error) {
       console.error(error)
@@ -41,18 +39,20 @@ const PerpanjangMember = () => {
 
   const autofillMember = (data) => {
     console.log("auto", data)
+    if(!data){
+      setPerpanjangData(initData)
+      return;
+    }
     setPerpanjangData({
+      ...initData,
       id: data.id,
       nama_pemilik: data.nama_pemilik,
       nomor_polisi: data.nomor_polisi,
       tanggal_masuk: data.tanggal_masuk.split('T')[0],
       tanggal_kadaluarsa: data.tanggal_kadaluarsa.split('T')[0],
       bulanan: data.bulanan,
-      keterangan: data.keterangan
+      keterangan: data.keterangan || ''
     })
-    if(!data){
-      setPerpanjangData(initData)
-    }
   }
 
   const submitPerpanjang = async () => {
@@ -250,15 +250,23 @@ const PerpanjangMember = () => {
 
               <div className="col-span-1">
                 <label className="block font-semibold text-mainColor text-lg">Biaya Bulanan</label>
-                <input
-                  type="text"
-                  className="mt-2 block w-full ps-3 p-2 border border-gray-300 rounded-lg shadow-sm"
-                  onChange={(e)=>{setPerpanjangData({
-                    ...perpanjangData,
-                    bulanan: e.target.value
-                  })}}
-                  value={perpanjangData.bulanan}
-                />
+                <div className="flex items-center">
+                  <p className="me-2">
+                    Rp: 
+                  </p>
+                  <input
+                    type="text"
+                    className="mt-2 block w-full ps-3 p-2 border border-gray-300 rounded-lg shadow-sm"
+                    onChange={(e)=>{
+                      const value = e.target.value.replace(/[^\d.-]/g, '')
+                      setPerpanjangData({
+                        ...perpanjangData,
+                        bulanan: value ? parseInt(value, 10) : 0
+                      })
+                    }}
+                    value={perpanjangData.bulanan.toLocaleString('en-US')}
+                  />
+                </div>
               </div>
 
               <div className="col-span-1">
@@ -281,7 +289,6 @@ const PerpanjangMember = () => {
                       setPerpanjangData({
                         ...perpanjangData,
                         jangka_perpanjang: value,
-                        // tanggal_kadaluarsa: currentDate.toISOString() || new Date().toISOString().split('T')[0],
                         kadaluarsa_berikutnya: currentDate.toISOString() || new Date().toISOString().split('T')[0]
                       })
                     }                    
@@ -305,10 +312,12 @@ const PerpanjangMember = () => {
                 <input
                   type="text"
                   className="mt-2 block w-full ps-3 p-2 border border-gray-300 rounded-lg shadow-sm"
+                  value={perpanjangData.jumlah_pembayaran.toLocaleString('en-US')}
                   onChange={(e) => {
+                    const value = e.target.value.replace(/[^\d.-]/g, '')
                     setPerpanjangData({
                       ...perpanjangData,
-                      jumlah_pembayaran: e.target.value
+                      jumlah_pembayaran: value ? parseInt(value, 10) : 0
                     })
                   }}
                 />

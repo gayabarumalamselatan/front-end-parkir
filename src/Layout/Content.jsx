@@ -1,4 +1,4 @@
-import { Fragment, lazy, Suspense } from "react";
+import { Fragment, lazy, Suspense, useMemo } from "react";
 import { Route, Routes } from "react-router-dom";
 import Home from "../Content/Home";
 import PageNotFound from "../Content/PageNotFound";
@@ -31,33 +31,28 @@ const Content = ({menuData}) => {
       </Suspense>
     );
   };
-  
 
-  const getDynamicRoutes = () => {
-    const menuReturn = menuData ? menuData.flatMap(module => {
-      // Check if the module has menus
-      if (module.menus && module.menus.length > 0) {
-        console.log("asdd",module.menus)
-        return module.menus
+const dynamicRoutes = useMemo(() => {
+  const menuReturn = menuData ? menuData.flatMap(module => {
+    if (module.menus && module.menus.length > 0) {
+      return module.menus
         .filter(menu => menu.url && menu.element)
         .map(menu => ({
-            path: menu.url,
-            element: loadComponent(menu.element)
+          path: menu.url,
+          element: loadComponent(menu.element)
         }));
-      } else {
-        console.log(menuData)
-        return [{
-          path: module.module_url,
-          element: loadComponent(module.module_element) 
-        }];
-      }
-   }) : [];
-    return menuReturn
-  };
+    } else {
+      return [{
+        path: module.module_url,
+        element: loadComponent(module.module_element) 
+      }];
+    }
+  }) : [];
+  
+  return menuReturn;
+}, [menuData]); // Add menuData as a dependency
 
-  const dynamicRoutes = getDynamicRoutes()
 
-  console.log('syn', menuData)
 
   return (
     <Fragment>

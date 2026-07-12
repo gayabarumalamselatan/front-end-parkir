@@ -10,16 +10,21 @@ const DaftarPengguna = () => {
   const [userToEdit, setUserToEdit] = useState({})
   const [userToDelete, setUserToDelete] = useState('')
   const namaTable = "Daftar Pengguna"
+  
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalData, setTotalData] = useState(0);
 
   const fetchUsers = async () => {
     const token = sessionStorage.getItem("accessToken")
     try {
-      const response = await axios.get(`${AUTH_SERVICE_USER}`, {
+      const response = await axios.get(`${AUTH_SERVICE_USER}?page=${page}&limit=${limit}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-      setUserData(response.data)
+      setUserData(response.data.data || [])
+      setTotalData(response.data.total || 0)
     } catch (error) {
       console.error(error)
     }
@@ -27,7 +32,7 @@ const DaftarPengguna = () => {
   
   useEffect(() => {
     fetchUsers()
-  }, [])
+  }, [page, limit])
     
   return (
    <Fragment>
@@ -53,6 +58,11 @@ const DaftarPengguna = () => {
         <DynamicTable
           tableName={namaTable}
           dataTable={userData}
+          page={page}
+          setPage={setPage}
+          limit={limit}
+          setLimit={setLimit}
+          totalData={totalData}
           setDataToEdit={setUserToEdit}
           setDataToDelete={setUserToDelete}
           setIsUserModalOpen={setIsModalOpen}

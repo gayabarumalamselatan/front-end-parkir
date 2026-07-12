@@ -13,12 +13,16 @@ const ManajemenRole = () => {
   const [roleToEdit, setRoleToEdit] = useState({})
   const [roleToDelete, setRoleToDelete] = useState('')
   const namaTable = "Daftar Role"
-
+  
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalData, setTotalData] = useState(0);
 
   const fetchRoles = async () => {
     try {
-      const response = await axios.get(`${AUTH_SERVICE_ROLE}`);
-      setRoleData(response.data)
+      const response = await axios.get(`${AUTH_SERVICE_ROLE}?page=${page}&limit=${limit}`);
+      setRoleData(response.data.data || [])
+      setTotalData(response.data.total || 0)
     } catch (error) {
       console.error(error)
     }
@@ -26,11 +30,8 @@ const ManajemenRole = () => {
 
   useEffect(()=>{
     fetchRoles()
-  },[])
+  },[page, limit])
 
-  console.log('permissionmodals', isRolePermissionModalOpen)
-
-  console.log('roletoedit', roleToEdit)
   return (
    <Fragment>
       <section className="content-header">
@@ -55,6 +56,11 @@ const ManajemenRole = () => {
         <DynamicTable
           tableName={namaTable}
           dataTable={roleData}
+          page={page}
+          setPage={setPage}
+          limit={limit}
+          setLimit={setLimit}
+          totalData={totalData}
           setDataToEdit={setRoleToEdit}
           setIsRoleModalOpen={setIsModalOpen}
           setDataToDelete={setRoleToDelete}

@@ -26,8 +26,8 @@ const RolePermissionModal = ({
 
   const fetchPermission = async () => {
     try {
-      const response = await axios.get(`${MENU_SERVICE_PERMISSON}`)
-      setPermissionData(response.data);
+      const response = await axios.get(`${MENU_SERVICE_PERMISSON}?limit=1000`)
+      setPermissionData(response.data.data || []);
       console.log(permissionData)
     } catch (error) {
       console.error(error);
@@ -36,8 +36,8 @@ const RolePermissionModal = ({
 
   const fetchModule = async () => {
     try {
-      const response = await axios.get(`${MENU_SERVICE_MODULE}`);
-      setModuleData(response.data);
+      const response = await axios.get(`${MENU_SERVICE_MODULE}?limit=1000`);
+      setModuleData(response.data.data || []);
       console.log(moduleData)
     } catch (error) {
       console.error(error);      

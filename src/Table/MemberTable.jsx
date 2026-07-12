@@ -4,11 +4,32 @@ import Lottie from "lottie-react";
 import PropTypes from "prop-types";
 import LoadingTable from "../animation/Loading-text-anim.json"
 
-const MemberTable = ({dataTable, isLoading}) => {
+const MemberTable = ({
+  dataTable, 
+  isLoading,
+  page = 1,
+  setPage = () => {},
+  limit = 10,
+  setLimit = () => {},
+  totalData = 0
+}) => {
 
-  // if (!Array.isArray(dataTable) || dataTable.length === 0) {
-  //   return <p className="text-center text-gray-500">No data available</p>;
-  // }
+  const totalPages = Math.ceil(totalData / limit) || 1;
+  const startData = (page - 1) * limit + 1;
+  const endData = Math.min(page * limit, totalData);
+
+  const handlePageSizeChange = (e) => {
+    setLimit(parseInt(e.target.value, 10));
+    setPage(1); // Reset to first page when limit changes
+  };
+
+  const handlePrevPage = () => {
+    if (page > 1) setPage(page - 1);
+  };
+
+  const handleNextPage = () => {
+    if (page < totalPages) setPage(page + 1);
+  };
 
   const headers = dataTable.length > 0 ? Object.keys(dataTable[0]) : [];
 
@@ -24,8 +45,8 @@ const MemberTable = ({dataTable, isLoading}) => {
               <select
                 style={{ margin: "5px" }}
                 id="pageSizeSelect"
-                // value={pageSize}
-                // onChange={handlePageSizeChange}
+                value={limit}
+                onChange={handlePageSizeChange}
                 className="form-form-select form-select-sm"
               >
                 <option value="5">5</option>
@@ -36,12 +57,6 @@ const MemberTable = ({dataTable, isLoading}) => {
               </select>
             </div>
             <div>
-              {/* <button 
-                className="rounded-xl bg-mainColor px-3 py-1 text-cyan-50 flex items-center justify-center"
-                onClick={() => modalHandler(tableName)}
-              > 
-                <FontAwesomeIcon icon={faAdd} className="mr-2"/> {AddButtonNaming(tableName)}
-              </button> */}
             </div>
           </div>
         </div>
@@ -66,29 +81,29 @@ const MemberTable = ({dataTable, isLoading}) => {
                 :
               <>
                 <thead className=" text-gray-700">
-              <tr>
-                <th className="border-e-2 border-b-2 border-slate-300 px-3">No</th>
-                {headers.map((header) => (
-                  <th key={header} className="px-3 py-2 border-b-2 border-slate-300 border-e-2 last:border-e-0">
-                    {header.replace(/_/g, ' ').toUpperCase()}
-                  </th>
+                  <tr>
+                    <th className="border-e-2 border-b-2 border-slate-300 px-3">No</th>
+                    {headers.map((header) => (
+                      <th key={header} className="px-3 py-2 border-b-2 border-slate-300 border-e-2 last:border-e-0">
+                        {header.replace(/_/g, ' ').toUpperCase()}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                {dataTable.map((row, index) => (
+                  <tr key={index} className="even:bg-slate-100">
+                    <td className="border-e-2 border-slate-300 px-3">
+                      {(page - 1) * limit + index + 1}
+                    </td>
+                    {headers.map((header) => (
+                      <td key={header} className='px-3 py-2 border-e-2 border-slate-300 last:border-e-0'>
+                        {row[header] ?? "-"}
+                      </td>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            </thead>
-            <tbody>
-            {dataTable.map((row, index) => (
-              <tr key={index} className="even:bg-slate-100">
-                <td className="border-e-2 border-slate-300 px-3">
-                  {index+1}
-                </td>
-                {headers.map((header) => (
-                  <td key={header} className='px-3 py-2 border-e-2 border-slate-300 last:border-e-0'>
-                    {row[header] ?? "-"}
-                  </td>
-                ))}
-              </tr>
-            ))}
-            </tbody>
+                </tbody>
               </>
             }
             
@@ -97,13 +112,35 @@ const MemberTable = ({dataTable, isLoading}) => {
         </div>
         
         <div className="flex justify-between border-t items-center px-4 py-2 text-sm text-gray-600">
-          <span className="font-semibold text-mainColor">Menampilkan 1 - 4 dari 8 data</span>
-          <div className="flex space-x-1">
-              <button className="px-2 py-1 border rounded hover:bg-gray-100"><FontAwesomeIcon icon={faCaretLeft}/></button>
-              <button className="px-3 py-1 bg-blue-600 text-white rounded">1</button>
-              <button className="px-3 py-1 border rounded hover:bg-gray-100">2</button>
-              <button className="px-2 py-1 border rounded hover:bg-gray-100"><FontAwesomeIcon icon={faCaretRight}/></button>
-          </div>
+            <span className="font-semibold text-mainColor">
+              Menampilkan {totalData > 0 ? startData : 0} - {endData} dari {totalData} data
+            </span>
+            <div className="flex space-x-1">
+                <button 
+                  className={`px-2 py-1 border rounded ${page === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+                  onClick={handlePrevPage}
+                  disabled={page === 1}
+                >
+                  <FontAwesomeIcon icon={faCaretLeft}/>
+                </button>
+                
+                {/* Simple pagination buttons - showing current, prev, next */}
+                {page > 1 && (
+                  <button className="px-3 py-1 border rounded hover:bg-gray-100" onClick={() => setPage(page - 1)}>{page - 1}</button>
+                )}
+                <button className="px-3 py-1 bg-blue-600 text-white rounded">{page}</button>
+                {page < totalPages && (
+                  <button className="px-3 py-1 border rounded hover:bg-gray-100" onClick={() => setPage(page + 1)}>{page + 1}</button>
+                )}
+
+                <button 
+                  className={`px-2 py-1 border rounded ${page === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+                  onClick={handleNextPage}
+                  disabled={page === totalPages}
+                >
+                  <FontAwesomeIcon icon={faCaretRight}/>
+                </button>
+            </div>
         </div>
       </div>
     </>
@@ -112,7 +149,12 @@ const MemberTable = ({dataTable, isLoading}) => {
 
 MemberTable.propTypes = {
   dataTable: PropTypes.arrayOf(PropTypes.object),
-  isLoading: PropTypes.bool
+  isLoading: PropTypes.bool,
+  page: PropTypes.number,
+  setPage: PropTypes.func,
+  limit: PropTypes.number,
+  setLimit: PropTypes.func,
+  totalData: PropTypes.number
 }
 
 export default MemberTable

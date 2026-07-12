@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { Fragment, useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = ({ show, menuData }) => {
   const location = useLocation();
@@ -78,24 +78,24 @@ const Sidebar = ({ show, menuData }) => {
   
       return (
         <li className={`nav-item mx-4 mb-2 ${isModuleOpen? 'sidebar-active' : ''}`} key={module.id}>
-          <a 
-            href={module.module_url || '#'} 
+          <Link
+            to={module.module_url || '#'} 
             className= {`nav-link nav-link align-items-center ${isModuleOpen ? 'bg-sidebarBg' : ''}`}
             onClick={() => toggleModule(module)}
           >
             <p className="mb-0 py-1 sidebar-text">{module.module_name}</p>
-          </a>
+          </Link>
           {isModuleOpen && module.menus && module.menus.length > 0 && (
             <ul className="nav nav-treeview">
               {module.menus.map(menu => (
                 <li className="nav-item w-100" key={menu.id}>
-                  <a
-                    href={menu.url || '#'}
+                  <Link
+                    to={menu.url || '#'}
                     className={`nav-link align-items-center ${activeItems.menuId === menu.id ? 'sidebar-active' : ''}`}
                     onClick={() => handleMenuClick(menu)}
                   >
                     <p className="mb-0 py-1 sidebar-text">{menu.menu_name}</p>
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -125,9 +125,9 @@ const Sidebar = ({ show, menuData }) => {
               data-accordion="false"
             >
               <li className="nav-item mb-2" key="home">
-                <a href="/" className={`nav-link mx-4 align-items-center`}>
+                <Link to="/" className={`nav-link mx-4 align-items-center`}>
                   <p className="mb-0 py-1 sidebar-text">Beranda</p>
-                </a>
+                </Link>
               </li>
               {renderModuleItems(menuData)}
             </ul>

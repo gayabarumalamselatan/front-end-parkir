@@ -17,8 +17,9 @@ const CekKadaluarsa = () => {
 
   const fetchMember = async  () => {
     try {
-      const response = await axios.get(`${MEMBER_SERVICE_API}`);
-      const mappedOption = response.data.map(item =>({
+      const response = await axios.get(`${MEMBER_SERVICE_API}?limit=1000`);
+      const responseData = response.data.data || [];
+      const mappedOption = responseData.map(item =>({
         id: item.id,
         value: item.nomor_polisi,
         label: item.nomor_polisi,

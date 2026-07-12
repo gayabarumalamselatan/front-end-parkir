@@ -8,25 +8,34 @@ const LihatMember = () => {
 
   const [memberData, setMemberData] = useState([])
   const [isLoading, setIsLoading] = useState(false);
+  
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalData, setTotalData] = useState(0);
 
   const fetchMember = async () => {
     setIsLoading(true)
     try {
-      const response = await axios.get(`${MEMBER_SERVICE_API}`);
+      const response = await axios.get(`${MEMBER_SERVICE_API}?page=${page}&limit=${limit}`);
       const dateFields = ['tanggal_masuk', 'tanggal_kadaluarsa']; 
+      
+      const responseData = response.data.data || [];
+      const totalCount = response.data.total || 0;
+
       // eslint-disable-next-line no-unused-vars
-      const formattedData = DateFormatter(response.data, dateFields).map(({id, is_black_list, ...rest}) => rest);
+      const formattedData = DateFormatter(responseData, dateFields).map(({id, is_black_list, ...rest}) => rest);
       setMemberData(formattedData);
+      setTotalData(totalCount);
       setIsLoading(false);
     } catch (error) {
       console.error(error)
       setIsLoading(false);
     }
   }
-  console.log(memberData)
+  
   useEffect(() => {
     fetchMember()
-  },[])
+  },[page, limit])
 
   return (
     <Fragment>
@@ -52,9 +61,11 @@ const LihatMember = () => {
             <MemberTable
               dataTable={memberData}
               isLoading={isLoading}
-              // setDataToEdit={setMenuToEdit}
-              // setIsMenuModalOpen={setIsModalOpen}
-              // setDataToDelete={setMenuToDelete}
+              page={page}
+              setPage={setPage}
+              limit={limit}
+              setLimit={setLimit}
+              totalData={totalData}
             />
             {/* <MenuModal
               isModalOpen={isModalOpen}

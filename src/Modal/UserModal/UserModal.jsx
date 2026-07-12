@@ -153,8 +153,8 @@ const UserModal = ({
   }
 
   const fetchRoles = async () => {
-    const response = await axios.get(`${AUTH_SERVICE_ROLE}`)
-    setRoleData(response.data)
+    const response = await axios.get(`${AUTH_SERVICE_ROLE}?limit=1000`)
+    setRoleData(response.data.data || [])
   }
 
   const handlePasswordChange = (e) => {

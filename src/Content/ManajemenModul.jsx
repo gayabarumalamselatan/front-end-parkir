@@ -10,12 +10,18 @@ const ManajemenModul = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [moduleToEdit, setModuleToEdit] = useState({})
   const [moduleToDelete, setModuleToDelete] = useState('')
+  
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalData, setTotalData] = useState(0);
+
   const namaTable = "Daftar Modul"
 
   const fetchModule = async () => {
     try {
-      const response = await axios.get(`${MENU_SERVICE_MODULE}`);
-      setModuleData(response.data)
+      const response = await axios.get(`${MENU_SERVICE_MODULE}?page=${page}&limit=${limit}`);
+      setModuleData(response.data.data || [])
+      setTotalData(response.data.total || 0)
     } catch (error) {
       console.error(error)
     }
@@ -23,7 +29,7 @@ const ManajemenModul = () => {
 
   useEffect(()=>{
     fetchModule()
-  },[])
+  },[page, limit])
 
   return (
    <Fragment>
@@ -49,6 +55,11 @@ const ManajemenModul = () => {
            <DynamicTable
              tableName={namaTable}
              dataTable={moduleData}
+             page={page}
+             setPage={setPage}
+             limit={limit}
+             setLimit={setLimit}
+             totalData={totalData}
              setDataToEdit={setModuleToEdit}
              setIsModuleModalOpen={setIsModalOpen}
              setDataToDelete={setModuleToDelete}

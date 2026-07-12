@@ -3,7 +3,6 @@ import { STRUK_SERVICE_API } from "../Config/ConfigUrl";
 import axios from "axios";
 import Select from "react-select";
 import Swal from "sweetalert2";
-import { use } from "react";
 
 
 const CetakStruk = () => {
@@ -28,7 +27,6 @@ const CetakStruk = () => {
     try {
       const response = await axios.get(`${STRUK_SERVICE_API}`);
       
-
       const latestStruk = {};
 
       response.data.data.forEach(item => {

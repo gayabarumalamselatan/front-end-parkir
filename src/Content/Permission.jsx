@@ -12,20 +12,38 @@ const Permission = () => {
   const [permissionToEdit, setPermissionToEdit] = useState({});
   const [permissionToDelete, setPermissionToDelete] = useState('');
   
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalData, setTotalData] = useState(0);
+
   const namaTable = "Daftar Permission";
 
   const fetchPermissionData = async () => {
     try {
-      const response = await axios.get(`${MENU_SERVICE_PERMISSON}`);
-      setPermissionData(response.data)
+      const response = await axios.get(`${MENU_SERVICE_PERMISSON}?page=${page}&limit=${limit}`);
+      
+      const responseData = response.data.data || [];
+      const totalCount = response.data.total || 0;
+
+      const mappedData = responseData.map(item => ({
+        id: item.id,
+        role_id: item.role_id,
+        module_id: item.module_id,
+        menu_id: item.menu_id,
+        role_name: item.role ? item.role.role_name : '-',
+        module_name: item.module ? item.module.module_name : '-',
+        menu_name: item.menu ? item.menu.menu_name : '-'
+      }));
+      setPermissionData(mappedData);
+      setTotalData(totalCount);
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    fetchPermissionData()
-  },[]);
+    fetchPermissionData();
+  }, [page, limit]);
 
   return (
     <Fragment>
@@ -51,6 +69,12 @@ const Permission = () => {
         <DynamicTable
           tableName={namaTable}
           dataTable={permissionData}
+          hiddenColumns={['role_id', 'module_id', 'menu_id']}
+          page={page}
+          setPage={setPage}
+          limit={limit}
+          setLimit={setLimit}
+          totalData={totalData}
           setDataToEdit={setPermissionToEdit}
           setIsPermissionModalOpen={setIsModalOpen}
           setDataToDelete={setPermissionToDelete}

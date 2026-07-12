@@ -200,19 +200,28 @@ const TambahMember = () => {
                 <label htmlFor="input1" className="block text-lg font-semibold text-mainColor">
                   Biaya Bulanan
                 </label>
-                <input
-                  onChange={(e)=>{ 
-                    const value = e.target.value
-                    setDataMember({
-                      ...datamember,
-                      bulanan: value ? parseInt(value, 10) : 0 
-                    })}
-                  }
-                  value={datamember.bulanan}
-                  type="text"
-                  className="mt-2 block w-full ps-3 p-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter value"
-                />
+                <div className="flex justify-center items-center">
+                  <p className="me-2">
+                    Rp: 
+                  </p>
+                  <input
+                    onChange={(e)=>{ 
+                      const value = e.target.value.replace(/[^\d.-]/g, '')
+                      const parsedValue = value ? parseInt(value, 10) : 0
+                      if(parsedValue <= 999999999){
+                        setDataMember({
+                          ...datamember,
+                          bulanan: parsedValue
+                        })}
+                      }
+                    }
+                    value={datamember.bulanan.toLocaleString('en-US')}
+                    type="text"
+                    className="mt-2 block w-full ps-3 p-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter value"
+                  />
+                </div>
+                
                 {errors.bulanan && <p className="text-red-500 text-sm">{errors.bulanan}</p>}
               </div>
 
